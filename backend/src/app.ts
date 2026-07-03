@@ -10,7 +10,14 @@ import { HttpStatus } from "./constants/httpStatus.constants";
 
 const app: Application = express();
 
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+const allowedOrigins = env.CLIENT_URL ? env.CLIENT_URL.split(",") : [];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),  
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
