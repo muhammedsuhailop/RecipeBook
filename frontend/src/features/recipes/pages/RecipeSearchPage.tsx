@@ -32,6 +32,12 @@ export function RecipeSearchPage(): ReactElement {
   const isSyncing = Boolean(urlQuery && (!hasSearched || urlQuery !== query));
   const isEffectivelyLoading = loading || isSyncing;
 
+  const isCanceledError = Boolean(
+    error &&
+    (error.toLowerCase().includes("cancel") ||
+      error.toLowerCase().includes("abort")),
+  );
+
   useEffect(() => {
     if (!urlQuery) return;
     if (urlQuery === query && urlPage === page && hasSearched) return;
@@ -82,7 +88,7 @@ export function RecipeSearchPage(): ReactElement {
           <SkeletonGrid count={8} />
         )}
 
-        {!isEffectivelyLoading && error && (
+        {!isEffectivelyLoading && error && !isCanceledError && (
           <ErrorState message={error} onRetry={() => search(query, page)} />
         )}
 
