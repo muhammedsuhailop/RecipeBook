@@ -5,6 +5,7 @@ import { AppShell } from "@/shared/components/layout/AppShell";
 import { Button } from "@/shared/components/ui/Button";
 import { Card } from "@/shared/components/ui/Card";
 import { ErrorState } from "@/shared/components/feedback/ErrorState";
+import { LoadingOverlay } from "@/shared/components/feedback/LoadingOverlay";
 import { FavoriteButton } from "@/features/favorites/components/FavoriteButton";
 import { useRecipeDetails } from "@/features/recipes/hooks/useRecipeDetails";
 import { stripHtml } from "@/utils/sanitizeHtml";
@@ -72,8 +73,12 @@ export function RecipeDetailsPage(): ReactElement {
         <DetailsSkeleton />
       ) : error && !recipe ? (
         <ErrorState message={error} onRetry={refetch} />
-      ) : recipe ? (
-        <article className="space-y-8">
+      ) : !recipe ? (
+        <DetailsSkeleton />
+      ) : (
+        <article className="space-y-8 relative">
+          <LoadingOverlay visible={loading} label="Updating details..." />
+
           <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-100 dark:border-slate-700/60 dark:bg-slate-900">
             {recipe.image ? (
               <img
@@ -180,7 +185,7 @@ export function RecipeDetailsPage(): ReactElement {
             </Card>
           </div>
         </article>
-      ) : null}
+      )}
     </AppShell>
   );
 }

@@ -8,19 +8,15 @@ import {
 import { fetchRecipeDetails } from "@/features/recipes/store/recipeThunks";
 import type { RecipeDetails } from "@/features/recipes/types/recipe.types";
 
-interface UseRecipeDetailsResult {
-  recipe: RecipeDetails | undefined;
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
-
-export function useRecipeDetails(recipeId: number): UseRecipeDetailsResult {
+export function useRecipeDetails(recipeId: number) {
   const dispatch = useAppDispatch();
   const recipe = useAppSelector(selectRecipeById(recipeId));
   const loadingId = useAppSelector(selectRecipeDetailsLoadingId);
   const error = useAppSelector(selectRecipeDetailsError);
+
   const controllerRef = useRef<AbortController | null>(null);
+
+  const activeIdRef = useRef<number | null>(null);
 
   const load = useCallback(() => {
     controllerRef.current?.abort();
@@ -31,14 +27,36 @@ export function useRecipeDetails(recipeId: number): UseRecipeDetailsResult {
 
   useEffect(() => {
     if (!Number.isFinite(recipeId)) return;
-    if (!recipe) load();
-    return () => controllerRef.current?.abort();
-  }, [recipeId, load]);
+
+    activeIdRef.current = recipeId;
+
+    if (!recipe) {
+      load();
+    }
+
+    return () => {
+      controllerRef.current?.abort();
+      activeIdRef.current = null;
+    };
+  }, [recipeId, recipe, load]);
+
+  const isCanceledError = Boolean(
+    error &&
+    (error.toLowerCase().includes("cancel") ||
+      error.toLowerCase().includes("abort")),
+  );
+
+  const isEffectivelyLoading =
+    loadingId === recipeId ||
+    (activeIdRef.current !== recipeId && !recipe) ||
+    (!recipe && isCanceledError);
+
+  const actualError = isEffectivelyLoading ? null : error;
 
   return {
     recipe,
-    loading: loadingId === recipeId,
-    error,
+    loading: isEffectivelyLoading,
+    error: actualError,
     refetch: load,
   };
 }

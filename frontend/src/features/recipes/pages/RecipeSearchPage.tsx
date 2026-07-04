@@ -8,6 +8,7 @@ import { Pagination } from "@/shared/components/ui/Pagination";
 import { SkeletonGrid } from "@/shared/components/feedback/SkeletonCard";
 import { EmptyState } from "@/shared/components/feedback/EmptyState";
 import { ErrorState } from "@/shared/components/feedback/ErrorState";
+import { LoadingOverlay } from "@/shared/components/feedback/LoadingOverlay";
 import { useRecipeSearch } from "@/features/recipes/hooks/useRecipeSearch";
 
 export function RecipeSearchPage(): ReactElement {
@@ -27,6 +28,9 @@ export function RecipeSearchPage(): ReactElement {
     search,
     changePage,
   } = useRecipeSearch();
+
+  const isSyncing = Boolean(urlQuery && (!hasSearched || urlQuery !== query));
+  const isEffectivelyLoading = loading || isSyncing;
 
   useEffect(() => {
     if (!urlQuery) return;
@@ -73,26 +77,31 @@ export function RecipeSearchPage(): ReactElement {
         </div>
       </section>
 
-      <section className="relative">
-        {loading && results.length === 0 && <SkeletonGrid count={8} />}
+      <section className="relative min-h-[300px]">
+        {isEffectivelyLoading && results.length === 0 && (
+          <SkeletonGrid count={8} />
+        )}
 
-        {!loading && error && (
+        {!isEffectivelyLoading && error && (
           <ErrorState message={error} onRetry={() => search(query, page)} />
         )}
 
-        {!loading && !error && hasSearched && results.length === 0 && (
-          <EmptyState
-            icon={<Search className="h-6 w-6" />}
-            title="No recipes found"
-            description={
-              query
-                ? `We couldn't find anything for "${query}". Try a different search.`
-                : "Try searching for a dish or ingredient."
-            }
-          />
-        )}
+        {!isEffectivelyLoading &&
+          !error &&
+          hasSearched &&
+          results.length === 0 && (
+            <EmptyState
+              icon={<Search className="h-6 w-6" />}
+              title="No recipes found"
+              description={
+                query
+                  ? `We couldn't find anything for "${query}". Try a different search.`
+                  : "Try searching for a dish or ingredient."
+              }
+            />
+          )}
 
-        {!hasSearched && !loading && !error && (
+        {!hasSearched && !isEffectivelyLoading && !error && !urlQuery && (
           <EmptyState
             icon={<Search className="h-6 w-6" />}
             title="Start searching"
@@ -111,9 +120,21 @@ export function RecipeSearchPage(): ReactElement {
                 </span>
               </span>
             </div>
-            <div className={loading ? "opacity-60 transition" : "transition"}>
-              <RecipeGrid recipes={results} />
+
+            <div className="relative">
+              <div
+                className={
+                  isEffectivelyLoading ? "opacity-50 transition" : "transition"
+                }
+              >
+                <RecipeGrid recipes={results} />
+              </div>
+              <LoadingOverlay
+                visible={isEffectivelyLoading}
+                label="Updating results..."
+              />
             </div>
+
             <div className="mt-10">
               <Pagination
                 page={page}

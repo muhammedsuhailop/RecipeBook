@@ -12,6 +12,8 @@ import type { RecipeSuggestion } from "@/features/recipes/types/recipe.types";
 const MIN_LENGTH = 2;
 const DEBOUNCE_MS = 350;
 
+const ENABLE_API_CALLS = false;
+
 interface UseRecipeSuggestionsResult {
   suggestions: RecipeSuggestion[];
   loading: boolean;
@@ -28,6 +30,12 @@ export function useRecipeSuggestions(
 
   useEffect(() => {
     controllerRef.current?.abort();
+
+    if (!ENABLE_API_CALLS) {
+      dispatch(clearSuggestions()); 
+      return;
+    }
+
     if (debounced.length < MIN_LENGTH) {
       dispatch(clearSuggestions());
       return;
