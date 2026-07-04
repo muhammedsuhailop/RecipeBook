@@ -10,6 +10,8 @@ interface EnvironmentVariables {
   REFRESH_TOKEN_COOKIE_NAME: string;
   COOKIE_DOMAIN: string;
   CLIENT_URL: string;
+  SPOONACULAR_API_KEY: string;
+  SPOONACULAR_BASE_URL: string;
 }
 
 const requiredKeys: Array<keyof EnvironmentVariables> = [
@@ -22,6 +24,8 @@ const requiredKeys: Array<keyof EnvironmentVariables> = [
   "REFRESH_TOKEN_COOKIE_NAME",
   "COOKIE_DOMAIN",
   "CLIENT_URL",
+  "SPOONACULAR_API_KEY",
+  "SPOONACULAR_BASE_URL",
 ];
 
 const loadEnv = (): EnvironmentVariables => {
@@ -47,6 +51,8 @@ const loadEnv = (): EnvironmentVariables => {
     REFRESH_TOKEN_COOKIE_NAME: process.env.REFRESH_TOKEN_COOKIE_NAME as string,
     COOKIE_DOMAIN: process.env.COOKIE_DOMAIN as string,
     CLIENT_URL: process.env.CLIENT_URL as string,
+    SPOONACULAR_API_KEY: process.env.SPOONACULAR_API_KEY as string,
+    SPOONACULAR_BASE_URL: process.env.SPOONACULAR_BASE_URL as string,
   };
 };
 
