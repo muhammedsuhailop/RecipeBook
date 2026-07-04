@@ -13,32 +13,31 @@ export const setAuthCookies = (
 ): void => {
   const isProduction = env.NODE_ENV === "production";
 
-  res.cookie(env.ACCESS_TOKEN_COOKIE_NAME, payload.accessToken, {
+  const cookieConfig = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "strict",
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
     maxAge: COOKIE_OPTIONS.ACCESS_TOKEN_MAX_AGE,
     path: COOKIE_OPTIONS.PATH,
-    domain: env.COOKIE_DOMAIN,
-  });
+    ...(isProduction ? {} : { domain: env.COOKIE_DOMAIN }),
+  };
+
+  res.cookie(env.ACCESS_TOKEN_COOKIE_NAME, payload.accessToken, cookieConfig);
 
   res.cookie(env.REFRESH_TOKEN_COOKIE_NAME, payload.refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: "strict",
+    ...cookieConfig,
     maxAge: COOKIE_OPTIONS.REFRESH_TOKEN_MAX_AGE,
-    path: COOKIE_OPTIONS.PATH,
-    domain: env.COOKIE_DOMAIN,
   });
 };
 
 export const clearAuthCookies = (res: Response): void => {
-  res.clearCookie(env.ACCESS_TOKEN_COOKIE_NAME, {
+  const isProduction = env.NODE_ENV === "production";
+
+  const clearConfig = {
     path: COOKIE_OPTIONS.PATH,
-    domain: env.COOKIE_DOMAIN,
-  });
-  res.clearCookie(env.REFRESH_TOKEN_COOKIE_NAME, {
-    path: COOKIE_OPTIONS.PATH,
-    domain: env.COOKIE_DOMAIN,
-  });
+    ...(isProduction ? {} : { domain: env.COOKIE_DOMAIN }),
+  };
+
+  res.clearCookie(env.ACCESS_TOKEN_COOKIE_NAME, clearConfig);
+  res.clearCookie(env.REFRESH_TOKEN_COOKIE_NAME, clearConfig);
 };
