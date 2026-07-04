@@ -1,0 +1,18 @@
+export const RecipeMessages = {
+  CREATE_SUCCESS: "Recipe created successfully",
+  UPDATE_SUCCESS: "Recipe updated successfully",
+  DELETE_SUCCESS: "Recipe deleted successfully",
+  FETCH_SUCCESS: "Recipe fetched successfully",
+  LIST_SUCCESS: "Recipes fetched successfully",
+  NOT_FOUND: "Recipe not found",
+  UNAUTHORIZED_ACTION: "You are not authorized to modify this recipe",
+  SEARCH_SUCCESS: "Recipes search completed successfully",
+  DETAILS_SUCCESS: "Recipe details fetched successfully",
+  AUTOCOMPLETE_SUCCESS: "Recipe suggestions fetched successfully",
+  BY_INGREDIENTS_SUCCESS: "Recipes fetched successfully by ingredients",
+  INVALID_RECIPE_ID: "Invalid recipe id provided",
+  QUERY_REQUIRED: "Search query is required",
+  INGREDIENTS_REQUIRED: "At least one ingredient is required",
+  PROVIDER_ERROR: "Failed to fetch data from recipe provider",
+  PROVIDER_UNAVAILABLE: "Recipe provider is currently unavailable",
+} as const;
