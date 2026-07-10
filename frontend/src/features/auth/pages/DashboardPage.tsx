@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, Search, Heart, ChefHat, ArrowRight } from "lucide-react";
+import { Search, Heart, ChefHat, ArrowRight } from "lucide-react";
 import { AppShell } from "@/shared/components/layout/AppShell";
 
 export function DashboardPage(): ReactElement {

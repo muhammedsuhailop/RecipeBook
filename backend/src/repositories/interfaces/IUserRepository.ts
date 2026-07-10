@@ -1,4 +1,5 @@
 import { User } from "../../domain/entities/User";
+import { ICreateRepository } from "./ICreateRepository";
 
 export interface CreateUserPayload {
   name: string;
@@ -7,8 +8,7 @@ export interface CreateUserPayload {
   password: string;
 }
 
-export interface IUserRepository {
-  create(payload: CreateUserPayload): Promise<User>;
+export interface IUserRepository extends ICreateRepository<User,CreateUserPayload> {
   findByEmail(email: string): Promise<User | null>;
   findByPhone(phone: string): Promise<User | null>;
   findById(id: string): Promise<User | null>;

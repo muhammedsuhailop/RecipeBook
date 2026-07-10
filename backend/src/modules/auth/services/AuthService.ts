@@ -18,8 +18,9 @@ import { HttpStatus } from "../../../constants/httpStatus.constants";
 import { AuthMessages } from "../../../constants/authMessages.constants";
 import { env } from "../../../config/env";
 import { logger } from "../../../config/logger";
+import ms from "ms";
 
-const REFRESH_TOKEN_TTL_MS = 15 * 24 * 60 * 60 * 1000;
+const refreshTokenTtlMs = ms(env.JWT_REFRESH_EXPIRES as ms.StringValue);
 
 export class AuthService implements IAuthService {
   constructor(
@@ -158,7 +159,7 @@ export class AuthService implements IAuthService {
     await this.refreshTokenRepository.update(storedToken.id, {
       userId: user.id,
       hashedToken: newHashedToken,
-      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+      expiresAt: new Date(Date.now() + refreshTokenTtlMs),
     });
 
     logger.info(`Refresh token rotated: userId=${user.id}`);
@@ -177,7 +178,7 @@ export class AuthService implements IAuthService {
     await this.refreshTokenRepository.create({
       userId,
       hashedToken: hashedRefreshToken,
-      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+      expiresAt: new Date(Date.now() + refreshTokenTtlMs),
     });
 
     return { accessToken, refreshToken };

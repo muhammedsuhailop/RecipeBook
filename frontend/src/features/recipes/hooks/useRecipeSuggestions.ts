@@ -8,11 +8,12 @@ import {
 import { clearSuggestions } from "@/features/recipes/store/recipeSlice";
 import { fetchRecipeSuggestions } from "@/features/recipes/store/recipeThunks";
 import type { RecipeSuggestion } from "@/features/recipes/types/recipe.types";
+import { env } from "@/shared/config/env";
 
 const MIN_LENGTH = 2;
 const DEBOUNCE_MS = 350;
 
-const ENABLE_API_CALLS = false;
+const ENABLE_API_CALLS = env.enableAutoSuggestion;
 
 interface UseRecipeSuggestionsResult {
   suggestions: RecipeSuggestion[];
@@ -32,7 +33,7 @@ export function useRecipeSuggestions(
     controllerRef.current?.abort();
 
     if (!ENABLE_API_CALLS) {
-      dispatch(clearSuggestions()); 
+      dispatch(clearSuggestions());
       return;
     }
 

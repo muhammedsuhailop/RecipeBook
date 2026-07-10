@@ -1,12 +1,15 @@
 import { Favorite } from "../../domain/entities/Favorite";
+import { ICreateRepository } from "./ICreateRepository";
 
 export interface CreateFavoritePayload {
   userId: string;
   recipeId: number;
 }
 
-export interface IFavoriteRepository {
-  create(payload: CreateFavoritePayload): Promise<Favorite>;
+export interface IFavoriteRepository extends ICreateRepository<
+  Favorite,
+  CreateFavoritePayload
+> {
   findByUserIdAndRecipeId(
     userId: string,
     recipeId: number,
