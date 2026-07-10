@@ -48,6 +48,18 @@ const recipesSlice = createSlice({
     resetRecipesState() {
       return initialState;
     },
+    clearSearch(state) {
+      state.search = {
+        query: "",
+        page: 1,
+        limit: 12,
+        results: [],
+        totalResults: 0,
+        loading: false,
+        error: null,
+        hasSearched: false,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -107,5 +119,6 @@ export const {
   setSearchPage,
   clearSuggestions,
   resetRecipesState,
+  clearSearch,
 } = recipesSlice.actions;
 export const recipesReducer = recipesSlice.reducer;

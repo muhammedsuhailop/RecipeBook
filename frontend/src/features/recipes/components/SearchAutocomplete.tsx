@@ -113,20 +113,6 @@ export function SearchAutocomplete({
           className="h-12 w-full flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500 sm:text-base"
         />
         {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
-        {value && !loading && (
-          <button
-            type="button"
-            onClick={() => {
-              setValue("");
-              setOpen(false);
-              inputRef.current?.focus();
-            }}
-            aria-label="Clear search"
-            className="rounded-md p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
         <button
           type="button"
           onClick={() => submit(value)}

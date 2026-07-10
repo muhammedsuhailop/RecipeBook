@@ -13,6 +13,7 @@ import {
 } from "@/features/recipes/store/recipeSelectors";
 import { searchRecipes } from "@/features/recipes/store/recipeThunks";
 import type { RecipeSummary } from "@/features/recipes/types/recipe.types";
+import { clearSearch } from "../store/recipeSlice";
 
 interface UseRecipeSearchResult {
   query: string;
@@ -26,6 +27,7 @@ interface UseRecipeSearchResult {
   hasSearched: boolean;
   search: (query: string, page?: number) => void;
   changePage: (page: number) => void;
+  clear: () => void;
 }
 
 export function useRecipeSearch(): UseRecipeSearchResult {
@@ -73,6 +75,10 @@ export function useRecipeSearch(): UseRecipeSearchResult {
     [run, query],
   );
 
+  const clear = useCallback(() => {
+    dispatch(clearSearch());
+  }, [dispatch]);
+
   useEffect(() => {
     return () => {
       controllerRef.current?.abort();
@@ -91,5 +97,6 @@ export function useRecipeSearch(): UseRecipeSearchResult {
     hasSearched,
     search,
     changePage,
+    clear,
   };
 }

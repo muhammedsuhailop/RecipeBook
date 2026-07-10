@@ -27,6 +27,7 @@ export function RecipeSearchPage(): ReactElement {
     hasSearched,
     search,
     changePage,
+    clear,
   } = useRecipeSearch();
 
   const isSyncing = Boolean(urlQuery && (!hasSearched || urlQuery !== query));
@@ -61,6 +62,11 @@ export function RecipeSearchPage(): ReactElement {
     },
     [setSearchParams, changePage, query],
   );
+
+  const handleClearResults = () => {
+    setSearchParams({});
+    clear();
+  };
 
   return (
     <AppShell>
@@ -117,6 +123,19 @@ export function RecipeSearchPage(): ReactElement {
 
         {results.length > 0 && (
           <>
+            {hasSearched && results.length > 0 && (
+              <div className="mb-4 flex justify-between items-center">
+                <h2 className="text-lg font-semibold">
+                  Search Results ({totalResults})
+                </h2>
+                <button
+                  onClick={handleClearResults}
+                  className="ml-1 hidden h-9 items-center justify-center rounded-xl bg-gradient-to-r from-slate-500 to-gray-600 px-4 text-sm font-medium text-white shadow-md shadow-slate-500/20 transition hover:from-slate-400 hover:to-gray-500 sm:inline-flex"
+                >
+                  Clear Results
+                </button>
+              </div>
+            )}
             <div className="mb-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
               <span>
                 {totalResults.toLocaleString()} result
