@@ -9,13 +9,13 @@ import { logger } from "../../../config/logger";
 import { IRecipeApiService } from "./IRecipeApiService";
 
 export class RecipeService implements IRecipeService {
-  constructor(private readonly spoonacularService: IRecipeApiService) {}
+  constructor(private readonly _recipeApiService: IRecipeApiService) {}
 
   public async searchRecipes(
     dto: SearchRecipesDto,
   ): Promise<RecipeSearchResponse> {
     const { results, totalResults } =
-      await this.spoonacularService.searchRecipes(dto);
+      await this._recipeApiService.searchRecipes(dto);
     logger.info(
       `Recipe search performed: query=${dto.query}, page=${dto.page}`,
     );
@@ -35,7 +35,7 @@ export class RecipeService implements IRecipeService {
   public async getRecipeDetails(
     recipeId: number,
   ): Promise<RecipeDetailsResponse> {
-    const details = await this.spoonacularService.getRecipeDetails(recipeId);
+    const details = await this._recipeApiService.getRecipeDetails(recipeId);
     logger.info(`Recipe details fetched: recipeId=${recipeId}`);
 
     return {
@@ -54,14 +54,14 @@ export class RecipeService implements IRecipeService {
     query: string,
   ): Promise<RecipeAutocompleteResponse[]> {
     const suggestions =
-      await this.spoonacularService.autocompleteRecipes(query);
+      await this._recipeApiService.autocompleteRecipes(query);
     return suggestions.map((item) => ({ id: item.id, title: item.title }));
   }
 
   public async searchByIngredients(
     dto: SearchByIngredientsDto,
   ): Promise<RecipesByIngredientsResponse> {
-    const results = await this.spoonacularService.searchByIngredients(dto);
+    const results = await this._recipeApiService.searchByIngredients(dto);
     logger.info(
       `Recipe search by ingredients performed: ingredients=${dto.ingredients.join(",")}`,
     );

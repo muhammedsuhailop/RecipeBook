@@ -24,25 +24,25 @@ const refreshTokenTtlMs = ms(env.JWT_REFRESH_EXPIRES as ms.StringValue);
 
 export class AuthService implements IAuthService {
   constructor(
-    private readonly userRepository: IUserRepository,
-    private readonly refreshTokenRepository: IRefreshTokenRepository,
+    private readonly _userRepository: IUserRepository,
+    private readonly _refreshTokenRepository: IRefreshTokenRepository,
   ) {}
 
   public async register(
     dto: RegisterDto,
   ): Promise<{ response: RegisterResponse; tokens: AuthTokens }> {
-    const existingEmail = await this.userRepository.findByEmail(dto.email);
+    const existingEmail = await this._userRepository.findByEmail(dto.email);
     if (existingEmail) {
       throw new ApiError(HttpStatus.CONFLICT, AuthMessages.EMAIL_EXISTS);
     }
 
-    const existingPhone = await this.userRepository.findByPhone(dto.phone);
+    const existingPhone = await this._userRepository.findByPhone(dto.phone);
     if (existingPhone) {
       throw new ApiError(HttpStatus.CONFLICT, AuthMessages.PHONE_EXISTS);
     }
 
     const hashedPassword = await hashPassword(dto.password);
-    const user = await this.userRepository.create({
+    const user = await this._userRepository.create({
       ...dto,
       password: hashedPassword,
     });
@@ -56,7 +56,7 @@ export class AuthService implements IAuthService {
   public async login(
     dto: LoginDto,
   ): Promise<{ response: LoginResponse; tokens: AuthTokens }> {
-    const user = await this.userRepository.findByEmail(dto.email);
+    const user = await this._userRepository.findByEmail(dto.email);
     if (!user) {
       throw new ApiError(
         HttpStatus.UNAUTHORIZED,
@@ -90,7 +90,7 @@ export class AuthService implements IAuthService {
     const hashedToken = hashToken(rawRefreshToken);
 
     const refreshToken =
-      await this.refreshTokenRepository.findByHashedToken(hashedToken);
+      await this._refreshTokenRepository.findByHashedToken(hashedToken);
 
     if (!refreshToken) {
       throw new ApiError(
@@ -99,7 +99,7 @@ export class AuthService implements IAuthService {
       );
     }
 
-    await this.refreshTokenRepository.deleteByUserId(refreshToken.userId);
+    await this._refreshTokenRepository.deleteByUserId(refreshToken.userId);
     logger.info("User logged out and session invalidated");
   }
 
@@ -125,7 +125,7 @@ export class AuthService implements IAuthService {
 
     const hashedIncomingToken = hashToken(rawRefreshToken);
     const storedToken =
-      await this.refreshTokenRepository.findByHashedToken(hashedIncomingToken);
+      await this._refreshTokenRepository.findByHashedToken(hashedIncomingToken);
 
     if (!storedToken) {
       throw new ApiError(
@@ -141,7 +141,7 @@ export class AuthService implements IAuthService {
       );
     }
 
-    const user = await this.userRepository.findById(payload.userId);
+    const user = await this._userRepository.findById(payload.userId);
     if (!user) {
       throw new ApiError(HttpStatus.NOT_FOUND, AuthMessages.USER_NOT_FOUND);
     }
@@ -156,7 +156,7 @@ export class AuthService implements IAuthService {
     });
     const newHashedToken = hashToken(newRefreshToken);
 
-    await this.refreshTokenRepository.update(storedToken.id, {
+    await this._refreshTokenRepository.update(storedToken.id, {
       userId: user.id,
       hashedToken: newHashedToken,
       expiresAt: new Date(Date.now() + refreshTokenTtlMs),
@@ -175,7 +175,7 @@ export class AuthService implements IAuthService {
     const refreshToken = generateRefreshToken({ userId, name });
     const hashedRefreshToken = hashToken(refreshToken);
 
-    await this.refreshTokenRepository.create({
+    await this._refreshTokenRepository.create({
       userId,
       hashedToken: hashedRefreshToken,
       expiresAt: new Date(Date.now() + refreshTokenTtlMs),

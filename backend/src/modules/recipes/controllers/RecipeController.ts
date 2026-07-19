@@ -5,7 +5,7 @@ import { HttpStatus } from "../../../constants/httpStatus.constants";
 import { RecipeMessages } from "../../../constants/recipeMessages.constants";
 
 export class RecipeController {
-  constructor(private readonly recipeService: IRecipeService) {}
+  constructor(private readonly _recipeService: IRecipeService) {}
 
   public searchRecipes = async (req: Request, res: Response): Promise<void> => {
     const { query, page, limit } = req.query as unknown as {
@@ -13,7 +13,7 @@ export class RecipeController {
       page: number;
       limit: number;
     };
-    const result = await this.recipeService.searchRecipes({
+    const result = await this._recipeService.searchRecipes({
       query,
       page,
       limit,
@@ -28,7 +28,7 @@ export class RecipeController {
     res: Response,
   ): Promise<void> => {
     const { id } = req.params as unknown as { id: number };
-    const result = await this.recipeService.getRecipeDetails(id);
+    const result = await this._recipeService.getRecipeDetails(id);
     res
       .status(HttpStatus.OK)
       .json(new ApiResponse(true, RecipeMessages.DETAILS_SUCCESS, result));
@@ -39,7 +39,7 @@ export class RecipeController {
     res: Response,
   ): Promise<void> => {
     const { query } = req.query as unknown as { query: string };
-    const result = await this.recipeService.autocompleteRecipes(query);
+    const result = await this._recipeService.autocompleteRecipes(query);
     res
       .status(HttpStatus.OK)
       .json(new ApiResponse(true, RecipeMessages.AUTOCOMPLETE_SUCCESS, result));
@@ -50,7 +50,7 @@ export class RecipeController {
     res: Response,
   ): Promise<void> => {
     const { ingredients } = req.query as unknown as { ingredients: string[] };
-    const result = await this.recipeService.searchByIngredients({
+    const result = await this._recipeService.searchByIngredients({
       ingredients,
     });
     res

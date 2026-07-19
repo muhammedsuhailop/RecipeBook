@@ -8,10 +8,10 @@ import { AuthMessages } from "../../../constants/authMessages.constants";
 import { env } from "../../../config/env";
 
 export class AuthController {
-  constructor(private readonly authService: IAuthService) {}
+  constructor(private readonly _authService: IAuthService) {}
 
   public register = async (req: Request, res: Response): Promise<void> => {
-    const { response, tokens } = await this.authService.register(req.body);
+    const { response, tokens } = await this._authService.register(req.body);
     setAuthCookies(res, tokens);
     res
       .status(HttpStatus.CREATED)
@@ -19,7 +19,7 @@ export class AuthController {
   };
 
   public login = async (req: Request, res: Response): Promise<void> => {
-    const { response, tokens } = await this.authService.login(req.body);
+    const { response, tokens } = await this._authService.login(req.body);
     setAuthCookies(res, tokens);
     res
       .status(HttpStatus.OK)
@@ -36,7 +36,7 @@ export class AuthController {
         AuthMessages.REFRESH_TOKEN_MISSING,
       );
     }
-    await this.authService.logout(refreshToken);
+    await this._authService.logout(refreshToken);
     clearAuthCookies(res);
     res
       .status(HttpStatus.OK)
@@ -47,7 +47,7 @@ export class AuthController {
     const refreshToken = req.cookies[env.REFRESH_TOKEN_COOKIE_NAME] as
       | string
       | undefined;
-    const { response, tokens } = await this.authService.refreshToken(
+    const { response, tokens } = await this._authService.refreshToken(
       refreshToken ?? "",
     );
     setAuthCookies(res, tokens);

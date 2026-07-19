@@ -25,10 +25,10 @@ import {
 } from "../responses/RecipeApiServiceResponses";
 
 export class SpoonacularService implements IRecipeApiService {
-  private readonly httpClient: AxiosInstance;
+  private readonly _httpClient: AxiosInstance;
 
   constructor() {
-    this.httpClient = axios.create({
+    this._httpClient = axios.create({
       baseURL: env.SPOONACULAR_BASE_URL,
       timeout: RecipeApiDefaults.REQUEST_TIMEOUT,
       params: { apiKey: env.SPOONACULAR_API_KEY },
@@ -122,7 +122,7 @@ export class SpoonacularService implements IRecipeApiService {
     queryParams: Record<string, string | number>,
   ): Promise<TResponse> {
     try {
-      const response = await this.httpClient.get<TResponse>(endpoint, {
+      const response = await this._httpClient.get<TResponse>(endpoint, {
         params: queryParams,
       });
       return response.data;

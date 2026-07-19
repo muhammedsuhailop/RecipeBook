@@ -11,8 +11,8 @@ import { IRecipeApiService } from "../../recipes/services/IRecipeApiService";
 
 export class FavoriteService implements IFavoriteService {
   constructor(
-    private readonly favoriteRepository: IFavoriteRepository,
-    private readonly spoonacularService: IRecipeApiService,
+    private readonly _favoriteRepository: IFavoriteRepository,
+    private readonly _recipeApiService: IRecipeApiService,
   ) {}
 
   public async addFavorite(
@@ -20,7 +20,7 @@ export class FavoriteService implements IFavoriteService {
     userId: string,
   ): Promise<FavoriteResponse> {
     const existingFavorite =
-      await this.favoriteRepository.findByUserIdAndRecipeId(
+      await this._favoriteRepository.findByUserIdAndRecipeId(
         userId,
         dto.recipeId,
       );
@@ -29,7 +29,7 @@ export class FavoriteService implements IFavoriteService {
       throw new ApiError(HttpStatus.CONFLICT, FavoriteMessages.ALREADY_EXISTS);
     }
 
-    const favorite = await this.favoriteRepository.create({
+    const favorite = await this._favoriteRepository.create({
       userId,
       recipeId: dto.recipeId,
     });
@@ -43,7 +43,7 @@ export class FavoriteService implements IFavoriteService {
   }
 
   public async getFavorites(userId: string): Promise<FavoriteListResponse> {
-    const favorites = await this.favoriteRepository.findAllByUserId(userId);
+    const favorites = await this._favoriteRepository.findAllByUserId(userId);
 
     if (favorites.length === 0) {
       return { favorites: [], total: 0 };
@@ -51,7 +51,7 @@ export class FavoriteService implements IFavoriteService {
 
     const recipeDetails = await Promise.all(
       favorites.map((favorite) =>
-        this.spoonacularService.getRecipeDetails(favorite.recipeId),
+        this._recipeApiService.getRecipeDetails(favorite.recipeId),
       ),
     );
 
@@ -66,13 +66,13 @@ export class FavoriteService implements IFavoriteService {
 
   public async removeFavorite(recipeId: number, userId: string): Promise<void> {
     const existingFavorite =
-      await this.favoriteRepository.findByUserIdAndRecipeId(userId, recipeId);
+      await this._favoriteRepository.findByUserIdAndRecipeId(userId, recipeId);
 
     if (!existingFavorite) {
       throw new ApiError(HttpStatus.NOT_FOUND, FavoriteMessages.NOT_FOUND);
     }
 
-    await this.favoriteRepository.deleteByUserIdAndRecipeId(userId, recipeId);
+    await this._favoriteRepository.deleteByUserIdAndRecipeId(userId, recipeId);
     logger.info(`Favorite removed: userId=${userId}, recipeId=${recipeId}`);
   }
 }

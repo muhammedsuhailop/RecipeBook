@@ -8,14 +8,14 @@ import { AuthMessages } from "../../../constants/authMessages.constants";
 import { AuthenticatedRequest } from "../../../middleware/auth.middleware";
 
 export class FavoriteController {
-  constructor(private readonly favoriteService: IFavoriteService) {}
+  constructor(private readonly _favoriteService: IFavoriteService) {}
 
   public addFavorite = async (
     req: AuthenticatedRequest,
     res: Response,
   ): Promise<void> => {
     const userId = this.getUserId(req);
-    const favorite = await this.favoriteService.addFavorite(req.body, userId);
+    const favorite = await this._favoriteService.addFavorite(req.body, userId);
     res
       .status(HttpStatus.CREATED)
       .json(new ApiResponse(true, FavoriteMessages.ADD_SUCCESS, favorite));
@@ -26,7 +26,7 @@ export class FavoriteController {
     res: Response,
   ): Promise<void> => {
     const userId = this.getUserId(req);
-    const favorites = await this.favoriteService.getFavorites(userId);
+    const favorites = await this._favoriteService.getFavorites(userId);
     res
       .status(HttpStatus.OK)
       .json(new ApiResponse(true, FavoriteMessages.LIST_SUCCESS, favorites));
@@ -38,7 +38,7 @@ export class FavoriteController {
   ): Promise<void> => {
     const userId = this.getUserId(req);
     const { recipeId } = req.params as unknown as { recipeId: number };
-    await this.favoriteService.removeFavorite(recipeId, userId);
+    await this._favoriteService.removeFavorite(recipeId, userId);
     res
       .status(HttpStatus.OK)
       .json(new ApiResponse(true, FavoriteMessages.REMOVE_SUCCESS));
